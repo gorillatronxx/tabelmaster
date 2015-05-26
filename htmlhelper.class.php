@@ -29,18 +29,15 @@ class htmlhelper {
   } // end function 
 
 
-
-
-
-
   public function linker($rows, $id_field) {
-	 
-    $count = count($rows); // get # of rows
-    $count--; // minus one to fix offset 
-      foreach($rows as $row) {
-      
+ 
+    $row = '';  
+    $c = count($rows); // get # of rows
+    $c--; // minus one to fix offset 
+      foreach($rows as $row) {          
+          
         // iterate throug and add a modify button 
-	    for($x = 0; $x <= $count; $x++) {	    
+	    for($x = 0; $x <= $c; $x++) {	    
 	  	  $column_u_id = $rows[$x][$id_field]; // use get u_id out of array   
   		  $rows[$x]['mod'] = "<A HREF='$_SERVER[PHP_SELF]?f=mod&" . $id_field . "=$column_u_id'>Mod</A>"; // build mod link 
 
