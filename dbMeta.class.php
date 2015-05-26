@@ -12,11 +12,12 @@
  * @author jms04747
  */
 class dbMeta {
-    
+
     // Get all the columns in an array with info use SHOW 
     public function get_db_columns() {  
         $database = new Database();
-        $sql = 'SHOW COLUMNS FROM ' . TABLE_NAME;
+        $sql = NULL; 
+        $sql .= 'SHOW COLUMNS FROM ' . TABLE_NAME;
         $database->query($sql);
         $database->execute();
         $data = $database->resultset();
