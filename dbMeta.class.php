@@ -21,7 +21,7 @@ class dbMeta {
         $database->query($sql);
         $database->execute();
         $data = $database->resultset();
-        $na = $this->nice_array($data);
+        $na = $this->nice_array($data); // Kets the array with Field name
     return $na;
     }
     

@@ -15,7 +15,6 @@ $row = isset($row) ? $row : $row = NULL;
 $tm   = new dbMeta(); 
 $sqlWorker = new sqlWorker(); 
 
-
 $cols = $tm->get_db_columns(); // array w/ all metadata 
 $pk   = $tm->get_pk($cols);    // str of the pk
 $cols_no_pk = $tm->zap_pk_id($cols, $pk); // array w/o pk all meta data
@@ -27,8 +26,10 @@ define("PRIMARY_KEY", $pk); // make a constant and be done
 
 // Cases for flow
 switch($f) {
-    case "af"  : add_form($row); // ? takes no vars
-        break;	
+    case "af"  : add_form($cols_no_pk); // ? takes no vars
+        break;
+    case "mf"  : mod_form($row); // takes some array rows
+        break; 
     case "r"   : $sqlWorker->show(); // show table DONE
 	break;
     case "del" : $sqlWorker->del_row($_GET[PRIMARY_KEY]); // del DONE
@@ -43,12 +44,47 @@ switch($f) {
 
 /////// Functions 
 
+// Make Add form
+function add_form($cols) {
+   // var_dump($cols); 
+    $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+    echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>"; 
+    
+    // for each col build a form element 
+    foreach($cols as $k => $v) { 
+        // get the numbers out
+        $n = substr($v['Type'], -3, 2);     
+   
+        $i = BuildFormInsert($k, $n); 
+        echo $i; 
+    }
+   
+    echo "<INPUT TYPE='hidden' NAME='f' VALUE='add'>"; // this is coded in 
+    echo "<BUTTON>Submit</BUTTON>"; 
+    echo "</FORM>";  
+
+}
+
+
+function BuildFormInsert($k, $n) {
+    $i = "<lable> $k <INPUT TYPE='text' NAME='$k' VALUE='' SIZE='$n' MAXLENGTH='$n'></lable><BR>"; 
+    return $i;  
+}
+
+
+
+
+
+
+
+/***
 // output form 
 function add_form($row) {
     $html = build_form($row);
        echo $html;
        exit; 
 } 
+***/
 
 
 // build form and populate as needed 
