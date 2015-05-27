@@ -25,16 +25,16 @@ class dbMeta {
         $v = NULL; 
         foreach($array as $k => $v) {         
             $size = \substr($array[$k]['Type'], -3, 2); // pull numbers size
-            $array[$k]['SIZE'] = $size; 
-            $array[$k]['NAME'] = $array[$k]['Field']; 
-            $array[$k]['VLAUE'] = '';
-            $array[$k]['MAXLENGTH'] = $size; 
-            $lable = str_replace(, '_', ' ');
-            $array[$k]['LABLE'] = $lable;
+            $array[$k]['SIZE'] = $size; // push SIZE
+            $array[$k]['NAME'] = $array[$k]['Field']; // push NAME
+            $array[$k]['MAXLENGTH'] = $size;  // push MAXLENGTH
+            $lable = strtr($array[$k]['Field'], '_',' '); // translate _ to ' ' 
+            $array[$k]['LABLE'] = ucwords($lable); // capitalize words, push LABLE
             
-            // make lable also correct case
             // placeholder & autofocus attributes
+            // also make id for css (later) 
             
+            // Work on this later for various data types
             if($array[$k]['Key'] === 'PRI') { 
                 $array[$k]['TYPE'] = 'HIDDEN';
             } else {
@@ -43,29 +43,28 @@ class dbMeta {
 
            $unset_array = ['Key','Default','Null','Field','Extra','Type']; 
            foreach ($unset_array as $x) {
-               unset($array[$k][$x]);   
+               unset($array[$k][$x]); // unset, junk clean up    
            }
            ksort($array[$k]); // sort for fun 
         }
     return $array;     
     }
-    
-   
-    
-    // Get all the columns in an array with info use SHOW 
+      
+    // Get all the columns in an array with info from DB SHOW 
     public function get_db_columns() {  
         $database = new Database();
-        $sql = NULL; 
-        $sql .= 'SHOW COLUMNS FROM ' . TABLE_NAME;
+        //$sql = NULL; 
+        $sql = 'SHOW COLUMNS FROM ' . TABLE_NAME;
         $database->query($sql);
         $database->execute();
         $data = $database->resultset();
-        $na = $this->nice_array($data); // Kets the array with Field name
-    return $na;
+        $array = $this->nice_array($data); // Kets the array with Field name
+    return $array;
     }
     
     // Get the primary key for table         
-    public function get_pk($array) {
+    public function get_pk() {
+        $array = $this->get_db_columns();
         foreach($array as $x) {
             if($x['Key'] === 'PRI'){
                 $str = $x['Field']; // from db output 
@@ -75,7 +74,9 @@ class dbMeta {
     }
 
     // Removes the pk (takes data array and pk string
-    public function zap_pk_id($array,$pk) {
+    public function zap_pk_id() {
+        $array = $this->get_db_columns();
+        $pk = $this->get_pk(); 
         unset($array[$pk]);
     return $array;     
     }
@@ -89,13 +90,31 @@ class dbMeta {
         unset($array); // or $mainArr = $resultArr;
     return $resultArr; 
     }
+    
     // Get the names only in array
-    public function get_col_names($array) {
+    public function get_col_names() {
+        $array = $this->get_db_columns(); 
         foreach($array as $k => $array) {
             $names[] = $k;
         }
     return $names;     
     }
+    
+    // Get the names only in array w/o pk
+    public function get_col_names_no_pk() {
+        $array = $this->get_db_columns();
+        $pk = $this->get_pk(); 
+        foreach($array as $v => $array) {
+            if($v === $pk) {              // remove value = pk
+                unset($v); 
+            } else {
+                $names[] = $v;
+            }   
+        }
+    return $names;     
+    }
+    
+    
     
 
 }// End class 

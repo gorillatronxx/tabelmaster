@@ -13,7 +13,6 @@
 
 class sqlWorker {
 
-
     // Just show the data in a table sorted
     function show() {
         $database = new Database(); 
@@ -40,14 +39,19 @@ class sqlWorker {
     } // END Function 
     
   // Adds record to the DB
-    function add_row($table_fields ,$vars_get) {   
+    function add_row($vars_get) {
+        $tm = new dbMeta();  // manipulate the DB Show data
+        $table_fields = $tm->get_col_names_no_pk();    // get col names for db insert
+                
         // Clean the get vars with a white list so db and all are happy 
         $white_list   = $table_fields;          // 
         $list_of_keys = array_keys($vars_get);  // From the get 
-        $diff = array_diff($list_of_keys,$white_list);    // Move to OBJ or function  
-        foreach ($diff as $d) {		
-	unset($vars_get[$d]); // ace the different	
-        }	 
+                
+        $diff = array_diff($list_of_keys,$white_list);    // compare arrays for insert  
+        foreach ($diff as $d) {		     
+            unset($vars_get[$d]); // ace the different	
+        }
+        
         $database = new Database();
         // build insert fields  
         $insert_fields = implode(", " ,$table_fields);
@@ -58,12 +62,12 @@ class sqlWorker {
         foreach($table_fields as $b) {
             $array .= ":". $b . ",";
         }
-
         $bind_fields = rtrim($array, $charlist = ',');
         $bind_fields = "(" . $bind_fields . ")"; 
 	
         // build the SQL
         $sql = "INSERT INTO "  . TABLE_NAME . " ". $insert_fields . " VALUES " . $bind_fields; 
+        
         $database->query($sql); 
 	
         // Run the bind statement in a loop 
@@ -91,9 +95,8 @@ class sqlWorker {
             $x .= $f . " =:" . $f . ", "; 	
         }
         $update_fields = rtrim($x, $charlist = ', ');
-
-        $sql = NULL; 
-        $sql .= "UPDATE " . TABLE_NAME . " SET " . $update_fields; 
+        
+        $sql = "UPDATE " . TABLE_NAME . " SET " . $update_fields; 
         $sql .= " WHERE " . PRIMARY_KEY . " = " . $del_id; 
         $database->query($sql);
         // Run the bind statement in a loop 
@@ -105,19 +108,17 @@ class sqlWorker {
         $this->move_along();
     }	
     
-    
     // Pull one row to modify send to form 
     function mod_pull_row($id){
         $database = new Database();
-        $sql = NULL; 
-        $sql .= "SELECT * FROM " . TABLE_NAME . " WHERE " . PRIMARY_KEY . " = "; 
+        $sql = "SELECT * FROM " . TABLE_NAME . " WHERE " . PRIMARY_KEY . " = "; 
         $sql_bind = ":" . PRIMARY_KEY;
         $sql .= $sql_bind; 
         $database->query($sql);
         $database->bind($sql_bind,$id);
         $database->execute();
         $row = $database->single(); 	
-        add_form($row);	
+        mod_prep($row); // send the row to get preped
     } // END Function 
     
     // put in the helper 
@@ -129,7 +130,7 @@ class sqlWorker {
 
     function add_button() {
         $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-	echo "<BR><A HREF='$phpSelf?f=af'>ADD</A>"; 
+	echo "<A HREF='$phpSelf?f=af'><button>ADD</button></A>"; 
     }
     
    

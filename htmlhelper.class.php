@@ -1,8 +1,7 @@
 <?php
 class htmlhelper {
 
-  public function array2table($array, $table = true)
-  {
+  public function array2table($array, $table = true) {
     $out = '';
     foreach ($array as $key => $value) {
         if (is_array($value)) {
@@ -22,7 +21,9 @@ class htmlhelper {
     }
 
     if ($table) {
-        return '<table>' . $tableHeader . $out . '</table>';
+        $tableHeader = strtr($tableHeader,'_',' '); // remove unerscores
+        $x = strtoupper($tableHeader);              // Make all caps 
+        return '<table>' . $x . $out . '</table>';
     } else {
         return $out;
     }
@@ -30,7 +31,6 @@ class htmlhelper {
 
 
   public function linker($rows, $id_field) {
- 
     $row = '';  
     $c = count($rows); // get # of rows
     $c--; // minus one to fix offset 
@@ -47,11 +47,6 @@ class htmlhelper {
     return $rows; 
   } // end of function 
   
-
-
-
-
-
 
 } // end of class 
 ?>

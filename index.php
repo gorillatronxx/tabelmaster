@@ -6,44 +6,46 @@ include 'htmlhelper.class.php'; // html routines
 include 'dbMeta.class.php'; // database meta data & help
 include 'sqlWorker.class.php';
 
-// Do a filter thing with this // FIX THIS
-$f   = isset($_GET['f']) ? $_GET['f'] : "r"; // check for f 
-$row = isset($row) ? $row : $row = NULL; 
+foreach($_GET as $k => $v) {
+    $v = filter_input(INPUT_GET, '$v', FILTER_SANITIZE_STRING);
+    echo $k .  "  " . $v .   "<BR>";
+    echo "X = " .   $v . "<BR>"; 
+    
+    $safe_get = [$k => $v];      
+}
 
+echo "var dum of Safe get:<BR>";
+var_dump($safe_get); 
+
+
+
+// Do a filter thing with this // FIX THIS
+$f   = isset($safe_get['f']) ? $safe_get['f'] : "r"; // check for f 
 
 // Get the essential table data needed 
 $tm   = new dbMeta(); 
 $sqlWorker = new sqlWorker(); 
 
-$cols = $tm->get_db_columns(); // array w/ all metadata 
-$pk   = $tm->get_pk($cols);    // str of the pk
-$cols_no_pk = $tm->zap_pk_id($cols, $pk); // array w/o pk all meta data
-$col_names  = $tm->get_col_names($cols);  // array col names all
-$col_names_no_pk = $tm->get_col_names($cols_no_pk); // array col names w/ no pk
+$cols = $tm->get_db_columns();  // array w/ all metadata 
+$pk   = $tm->get_pk();          // str of the pk
+$cols_no_pk = $tm->zap_pk_id(); // array w/o pk all meta data
 
 define("PRIMARY_KEY", $pk); // make a constant and be done
+     
         
-//var_dump($cols); 
+
 
 $form_array_add =  $tm->buildFormArray($cols_no_pk); 
-
-// make $form_array_mod & be sure to add the Get crap to the values
-
-//var_dump($form_array); 
-
-
 
 // Cases for flow
 switch($f) {
     case "af"  : add_form($form_array_add); // ? takes no vars
         break;
-    case "mf"  : mod_form($row); // takes some array rows
-        break; 
     case "r"   : $sqlWorker->show(); // show table DONE
 	break;
-    case "del" : $sqlWorker->del_row($_GET[PRIMARY_KEY]); // del DONE
+    case "del" : $sqlWorker->del_row($safe_get[PRIMARY_KEY]); // del DONE
         break;
-    case "add" : $sqlWorker->add_row($col_names_no_pk, $_GET); // DONE
+    case "add" : $sqlWorker->add_row($safe_get); // DONE
         break;  
     case "ud"  : $sqlWorker->update($_GET); // DONE
 	break;  
@@ -53,89 +55,62 @@ switch($f) {
 
 /////// Functions 
 
+function mod_form($array){
+    $f = 'ud';
+   echo BuildStartForm(); 
+       foreach($array as $k => $v_array) {
+           echo(BuildFormInsert($v_array));
+        } 
+   echo BuildEndForm($f);   
+}
+
+
 // Make Add form
 function add_form($array) {
-   $f = 'add';  
-   var_dump($array); 
-   
-   // Move to function 
+   $f = 'add'; 
+   echo BuildStartForm(); 
+        foreach($array as $k => $v_array) { // use values of array? 
+        echo(BuildFormInsert($v_array));          
+    } 
+    echo BuildEndForm($f); 
+}
+
+
+// Move these out? 
+
+function BuildStartForm() {
    $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-   echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>"; 
-    
-    // for each col build a form element 
-    foreach($array as $k => $v_array) { 
-       echo(BuildFormInsert($v_array)); 
-         
-    }
-   
-    echo "<INPUT TYPE='hidden' NAME='f' VALUE='add'>"; // this is coded in 
+   echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>";     
+}
+
+function BuildEndForm($f) {
+    echo "<INPUT TYPE='hidden' NAME='f' VALUE='$f'>"; // this is coded in 
     echo "<BUTTON>Submit</BUTTON>"; 
     echo "</FORM>";  
-
 }
+
 
 // HTML Helper functions for forms
 function BuildFormInsert($v) {
-    $i = "<lable> $v[LABLE] <INPUT TYPE='$v[TYPE]' NAME='$v[NAME]' VALUE='' SIZE='$v[size]' MAXLENGTH='$v[SIZE]'></lable><BR>"; 
+    $value = isset($v['VALUE']) ? $v['VALUE'] : '';        // value set or not
+    $lable = ($v['TYPE'] === "HIDDEN") ? '' : $v['LABLE']; // hide HIDDEN type lable  
+    // generate 
+    $i = "<lable> $lable <INPUT TYPE='$v[TYPE]' NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]'></lable><BR>"; 
     return $i;  
 }
 
 
-
-
-
-
-
-
-
-/***
-// output form 
-function add_form($row) {
-    $html = build_form($row);
-       echo $html;
-       exit; 
-} 
-***/
-
-
-// build form and populate as needed 
-function build_form($row) {
-  // if we have a row with stuff in it  
-	if(isset($row)) { 
-		$f = "ud"; 
-		$animal_id = $row['animal_id'];
-		$animal_name = $row['animal_name'];
-		$animal_type = $row['animal_type'];
-	} 
-	// else if there is nothing in it 
-	else {
-		$f = "add"; 	
-		$animal_id = ''; 
-		$animal_name = ''; 
-		$animal_type = ''; 
-	}	
-        
-	$html = ""; 
-	$html .= "<form action='$_SERVER[PHP_SELF]?' method='get' enctype='text/plain' target='_parent'>";
-	$html .= "	Animal Name: <INPUT TYPE='text' NAME='animal_name' VALUE='$animal_name' SIZE='20' MAXLENGTH='20'>";  
-	
-        $html .= "Animal Type: <INPUT TYPE='text' NAME='animal_type' VALUE='$animal_type' SIZE='20' MAXLENGTH='20'>";  
-	
-        $html .= "<INPUT TYPE='hidden' NAME='f' value='$f'>"; 
-	$html .= "<INPUT TYPE='hidden' NAME='animal_id' value='$animal_id'>"; 
-	$html .= "<BUTTON>Submit</BUTTON>	"; 
-        $html .= "<BR>"; 
-        //$html .= $p; 
-        
-        $html .= "</form> "; 
-        
-	return $html; 
-
-} // End Function 
-
-
-
-
+// Preps the mod row data, puts it into form array for auto gen update form 
+function mod_prep($row){
+    $tm   = new dbMeta(); 
+    $cols = $tm->get_db_columns(); // array w/ all metadata 
+    $form_array_mod =  $tm->buildFormArray($cols); // make to nice form ready
+    // insert the values to the form array for mod form
+    foreach($row as $k => $v) {
+        $form_array_mod[$k]['VALUE'] = $v;
+    }
+    mod_form($form_array_mod);  // returns array ready to be processed 
+}
 
 ob_end_flush();
 
