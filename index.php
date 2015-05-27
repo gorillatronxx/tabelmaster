@@ -23,10 +23,19 @@ $col_names_no_pk = $tm->get_col_names($cols_no_pk); // array col names w/ no pk
 
 define("PRIMARY_KEY", $pk); // make a constant and be done
         
+//var_dump($cols); 
+
+$form_array_add =  $tm->buildFormArray($cols_no_pk); 
+
+// make $form_array_mod & be sure to add the Get crap to the values
+
+//var_dump($form_array); 
+
+
 
 // Cases for flow
 switch($f) {
-    case "af"  : add_form($cols_no_pk); // ? takes no vars
+    case "af"  : add_form($form_array_add); // ? takes no vars
         break;
     case "mf"  : mod_form($row); // takes some array rows
         break; 
@@ -45,18 +54,18 @@ switch($f) {
 /////// Functions 
 
 // Make Add form
-function add_form($cols) {
-   // var_dump($cols); 
-    $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-    echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>"; 
+function add_form($array) {
+   $f = 'add';  
+   var_dump($array); 
+   
+   // Move to function 
+   $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+   echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>"; 
     
     // for each col build a form element 
-    foreach($cols as $k => $v) { 
-        // get the numbers out
-        $n = substr($v['Type'], -3, 2);     
-   
-        $i = BuildFormInsert($k, $n); 
-        echo $i; 
+    foreach($array as $k => $v_array) { 
+       echo(BuildFormInsert($v_array)); 
+         
     }
    
     echo "<INPUT TYPE='hidden' NAME='f' VALUE='add'>"; // this is coded in 
@@ -65,11 +74,13 @@ function add_form($cols) {
 
 }
 
-
-function BuildFormInsert($k, $n) {
-    $i = "<lable> $k <INPUT TYPE='text' NAME='$k' VALUE='' SIZE='$n' MAXLENGTH='$n'></lable><BR>"; 
+// HTML Helper functions for forms
+function BuildFormInsert($v) {
+    $i = "<lable> $v[LABLE] <INPUT TYPE='$v[TYPE]' NAME='$v[NAME]' VALUE='' SIZE='$v[size]' MAXLENGTH='$v[SIZE]'></lable><BR>"; 
     return $i;  
 }
+
+
 
 
 

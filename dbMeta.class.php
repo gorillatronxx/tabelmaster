@@ -12,7 +12,46 @@
  * @author jms04747
  */
 class dbMeta {
+    
+    /*** This takes in some data and formats it all nice to build forms.
+      Makes array like this keyed with NAME
+      'SIZE' => string '25' (length=2)
+      'NAME' => string 'animal_type' (length=11)
+      'VLAUE' => string '' (length=0)
+      'MAXLENGTH' => string '25' (length=2)
+      'TYPE' => string 'TEXT' (length=4)
+    ***/ 
+      function buildFormArray($array) {
+        $v = NULL; 
+        foreach($array as $k => $v) {         
+            $size = \substr($array[$k]['Type'], -3, 2); // pull numbers size
+            $array[$k]['SIZE'] = $size; 
+            $array[$k]['NAME'] = $array[$k]['Field']; 
+            $array[$k]['VLAUE'] = '';
+            $array[$k]['MAXLENGTH'] = $size; 
+            $lable = str_replace(, '_', ' ');
+            $array[$k]['LABLE'] = $lable;
+            
+            // make lable also correct case
+            // placeholder & autofocus attributes
+            
+            if($array[$k]['Key'] === 'PRI') { 
+                $array[$k]['TYPE'] = 'HIDDEN';
+            } else {
+                $array[$k]['TYPE'] = 'TEXT'; 
+            } // and add CHAR, TEXT, TINYTEXT, MEDIUMTEXT, LONGTEXT (searhc TEXT)  
 
+           $unset_array = ['Key','Default','Null','Field','Extra','Type']; 
+           foreach ($unset_array as $x) {
+               unset($array[$k][$x]);   
+           }
+           ksort($array[$k]); // sort for fun 
+        }
+    return $array;     
+    }
+    
+   
+    
     // Get all the columns in an array with info use SHOW 
     public function get_db_columns() {  
         $database = new Database();
