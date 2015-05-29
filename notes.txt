@@ -1,4 +1,0 @@
-Notes:
-
-Need to have the sql table data as such in data structure:
-
