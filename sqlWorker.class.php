@@ -14,7 +14,7 @@
 class sqlWorker {
 
     // Just show the data in a table sorted
-    function show() {
+    public function show() {
         $database = new Database(); 
         $ht       = new HtmlHelper();
         // Build the sql piece by piece to put in $vars     
@@ -28,8 +28,7 @@ class sqlWorker {
         exit; 
     } // end function 
     
-    function del_row($id) {
-        $_GET['f'] = null; 
+     public function del_row($id) { 
         $database = new Database();	
         $sql = NULL;
         $sql .= "DELETE FROM " . TABLE_NAME . " WHERE " . PRIMARY_KEY . " = " . $id; 		
@@ -39,7 +38,7 @@ class sqlWorker {
     } // END Function 
     
   // Adds record to the DB
-    function add_row($vars_get) {
+    public function add_row($vars_get) {
         $tm = new dbMeta();  // manipulate the DB Show data
         $table_fields = $tm->get_col_names_no_pk();    // get col names for db insert
                 
@@ -81,7 +80,7 @@ class sqlWorker {
     
     
     // Update row in DB
-    function update($vars_get) {
+    public function update($vars_get) {
         $database = new Database();
         $del_id = $vars_get[PRIMARY_KEY];
 
@@ -109,7 +108,7 @@ class sqlWorker {
     }	
     
     // Pull one row to modify send to form 
-    function mod_pull_row($id){
+    public function mod_pull_row($id){
         $database = new Database();
         $sql = "SELECT * FROM " . TABLE_NAME . " WHERE " . PRIMARY_KEY . " = "; 
         $sql_bind = ":" . PRIMARY_KEY;
@@ -118,19 +117,36 @@ class sqlWorker {
         $database->bind($sql_bind,$id);
         $database->execute();
         $row = $database->single(); 	
-        mod_prep($row); // send the row to get preped
+        $this->mod_prep($row); // send the row to get preped
     } // END Function 
+
+
+// Preps the mod row data, puts it into form array for auto gen update form 
+
+    private function mod_prep($row){
+        $tm   = new dbMeta(); 
+        $cols = $tm->get_db_columns(); // array w/ all metadata 
+        $form_array_mod =  $tm->buildFormArray($cols); // make to nice form ready
+        // insert the values to the form array for mod form
+        foreach($row as $k => $v) {
+            $form_array_mod[$k]['VALUE'] = $v;
+           }
+        mod_form($form_array_mod);  // returns array ready to be processed 
+    }
     
     // put in the helper 
-    function move_along() {
-        $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        header("location:$phpSelf") ;	
-	exit; 	
+    public function move_along() {
+        $phpSelf = $this->phpSelf();
+        header("location:$phpSelf") ;		
     }
 
-    function add_button() {
+    public function add_button() {
+	echo "<A HREF='$this->phpSelf?f=af'><button>ADD</button></A>"; 
+    }
+    
+    public function phpSelf() {
         $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-	echo "<A HREF='$phpSelf?f=af'><button>ADD</button></A>"; 
+        return $phpSelf; 
     }
     
    

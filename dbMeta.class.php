@@ -21,7 +21,7 @@ class dbMeta {
       'MAXLENGTH' => string '25' (length=2)
       'TYPE' => string 'TEXT' (length=4)
     ***/ 
-      function buildFormArray($array) {
+      public function buildFormArray($array) {
         $v = NULL; 
         foreach($array as $k => $v) {         
             $size = \substr($array[$k]['Type'], -3, 2); // pull numbers size
@@ -82,7 +82,7 @@ class dbMeta {
     }
 
     // Take the raw mysql column data, make a nice keyed array by col name
-    public function nice_array($array) {
+    private function nice_array($array) {
         $resultArr = array();
         foreach ($array as $value) {
             $resultArr[$value['Field']] = $value; // Field is db 
@@ -113,8 +113,6 @@ class dbMeta {
         }
     return $names;     
     }
-    
-    
-    
+     
 
 }// End class 

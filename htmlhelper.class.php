@@ -1,6 +1,8 @@
 <?php
+
 class htmlhelper {
 
+  // Builds a table from rows of data   
   public function array2table($array, $table = true) {
     $out = '';
     foreach ($array as $key => $value) {
@@ -19,7 +21,7 @@ class htmlhelper {
             $out .= "<td>$value</td>";
         }
     }
-
+    // build it up 
     if ($table) {
         $tableHeader = strtr($tableHeader,'_',' '); // remove unerscores
         $x = strtoupper($tableHeader);              // Make all caps 
@@ -29,7 +31,7 @@ class htmlhelper {
     }
   } // end function 
 
-
+  // builds (mod & del) links to the table 
   public function linker($rows, $id_field) {
     $row = '';  
     $c = count($rows); // get # of rows
@@ -47,6 +49,27 @@ class htmlhelper {
     return $rows; 
   } // end of function 
   
-
+  // Put more html classes here
+     function BuildStartForm() {
+       $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+       echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>";     
+    }
+ 
+    function BuildFormInsert($v) {
+        $value = isset($v['VALUE']) ? $v['VALUE'] : '';        // value set or not
+        $lable = ($v['TYPE'] === "HIDDEN") ? '' : $v['LABLE']; // hide HIDDEN type lable  
+        // generate 
+        $i = "<lable> $lable "
+                . "<INPUT TYPE='$v[TYPE]'NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]'>"
+                . "</lable><BR>"; 
+    return $i;  
+    }
+    
+    function BuildEndForm($f) {
+        echo "<INPUT TYPE='hidden' NAME='f' VALUE='$f'>"; // this is coded in 
+        echo "<BUTTON>Submit</BUTTON>"; 
+        echo "</FORM>";  
+    } 
+  
+ 
 } // end of class 
-?>
