@@ -23,9 +23,12 @@ class sqlWorker {
         $result = $database->resultset(); 
         /*** send to the linker  param 1 - data  --- param 2 - unique db row  ***/
         $rows = $ht->linker($result, PRIMARY_KEY); // Builds link on id field
-        echo  $ht->array2table($rows); // Prints out a table 
-        $this->add_button(); // adds a stupid button
-        exit; 
+        
+        $table = $ht->array2table($rows); 
+        //echo  $ht->array2table($rows); // Prints out a table         
+        ////$ht->add_button(); // adds a stupid button
+        //exit; 
+        return $table; 
     } // end function 
     
      public function del_row($id) { 
@@ -136,18 +139,14 @@ class sqlWorker {
     
     // put in the helper 
     public function move_along() {
-        $phpSelf = $this->phpSelf();
+        $fv = new filterVars;
+        $phpSelf = $fv->phpSelf();
         header("location:$phpSelf") ;		
     }
 
-    public function add_button() {
-	echo "<A HREF='$this->phpSelf?f=af'><button>ADD</button></A>"; 
-    }
+
     
-    public function phpSelf() {
-        $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        return $phpSelf; 
-    }
+
     
    
 } // End class

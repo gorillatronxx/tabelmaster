@@ -28,8 +28,8 @@ class dbMeta {
             $array[$k]['SIZE'] = $size; // push SIZE
             $array[$k]['NAME'] = $array[$k]['Field']; // push NAME
             $array[$k]['MAXLENGTH'] = $size;  // push MAXLENGTH
-            $lable = strtr($array[$k]['Field'], '_',' '); // translate _ to ' ' 
-            $array[$k]['LABLE'] = ucwords($lable); // capitalize words, push LABLE
+            $label = strtr($array[$k]['Field'], '_',' '); // translate _ to ' ' 
+            $array[$k]['LABEL'] = ucwords($label); // capitalize words, push LABLE
             
             // placeholder & autofocus attributes
             // also make id for css (later) 

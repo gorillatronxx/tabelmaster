@@ -14,9 +14,9 @@ class htmlhelper {
                     '</th>';
             }
             array_keys($value);
-            $out .= '<tr>';
+            $out .= "\n<tr>";
             $out .= $this->array2table($value, false);
-            $out .= '</tr>';
+            $out .= "</tr>\n";
         } else {
             $out .= "<td>$value</td>";
         }
@@ -25,7 +25,7 @@ class htmlhelper {
     if ($table) {
         $tableHeader = strtr($tableHeader,'_',' '); // remove unerscores
         $x = strtoupper($tableHeader);              // Make all caps 
-        return '<table>' . $x . $out . '</table>';
+        return "\n<table>\n" . $x . $out . "\n</table>\n";
     } else {
         return $out;
     }
@@ -41,9 +41,10 @@ class htmlhelper {
         // iterate throug and add a modify button 
 	    for($x = 0; $x <= $c; $x++) {	    
 	  	  $column_u_id = $rows[$x][$id_field]; // use get u_id out of array   
-  		  $rows[$x]['mod'] = "<A HREF='$_SERVER[PHP_SELF]?f=mod&" . $id_field . "=$column_u_id'>Mod</A>"; // build mod link 
 
-		  $rows[$x]['del'] = "<A HREF='$_SERVER[PHP_SELF]?f=del&" . $id_field . "=$column_u_id'>Del</A>"; // build del link	
+                  $rows[$x]['mod'] = "<A HREF='$_SERVER[PHP_SELF]?f=mod&" . $id_field . "=$column_u_id'><button>Mod</button></A>"; // build mod link 
+
+		  $rows[$x]['del'] = "<A HREF='$_SERVER[PHP_SELF]?f=del&" . $id_field . "=$column_u_id'><button>Del</button></A>"; // build del link	
 	    }	
     }
     return $rows; 
@@ -52,24 +53,70 @@ class htmlhelper {
   // Put more html classes here
      function BuildStartForm() {
        $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-       echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>";     
+       echo "<fieldset>";
+       echo "<legend>tablemaster</legend>";
+       echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>\n";     
     }
  
+    // builds the form insert things 
     function BuildFormInsert($v) {
         $value = isset($v['VALUE']) ? $v['VALUE'] : '';        // value set or not
-        $lable = ($v['TYPE'] === "HIDDEN") ? '' : $v['LABLE']; // hide HIDDEN type lable  
-        // generate 
-        $i = "<lable> $lable "
-                . "<INPUT TYPE='$v[TYPE]'NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]'>"
-                . "</lable><BR>"; 
-    return $i;  
+
+        // figure out type for form 
+        $type = ($v['TYPE'] === "HIDDEN") ? 'hidden' : 'visable'; 
+        
+        // make hidden or text type 
+        if ($type === 'hidden') {
+           $i = "<INPUT TYPE='$type' NAME='$v[NAME]' VALUE='$value'>";            
+            
+        } else {
+            $i = "<P>\n";
+            $i .= "<label for='$v[NAME]'>" . $v['LABEL'] ."</label>\n";
+            $i .= "<INPUT TYPE='$v[TYPE]'NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]' required>";
+            $i .= "</P>"; 
+        }
+        // Need to add textarea type
+        return $i;  
     }
     
+    // end of the form 
     function BuildEndForm($f) {
         echo "<INPUT TYPE='hidden' NAME='f' VALUE='$f'>"; // this is coded in 
-        echo "<BUTTON>Submit</BUTTON>"; 
+        echo "<p class='submit'> <input type='submit' value='Submit' /></p>"; 
+        echo "</fieldset>"; 
         echo "</FORM>";  
     } 
-  
- 
+
+    // Make add button for the form 
+    public function addButton() {
+        $fv = new filterVars;
+        $phpSelf = $fv->phpSelf();
+	echo "<P><A HREF='$phpSelf?f=af'><button>ADD</button></A></P>\n"; 
+    }
+   
+    public function startHTML() {
+        $css = CSS; 
+        // if we have a .css in the config.class 
+        if(isset($css)) {
+            $link = "  <link rel='stylesheet' href='" . CSS . "'>\n"; 
+        }
+        
+        echo "<!DOCTYPE html>\n" 
+        . "<html>\n" 
+        . "<head>\n";
+        echo $link; 
+        echo "<meta charset='UTF-8'>\n"
+        . "<title>tablemaster</title>\n"
+        . "</head>\n"
+        . "<body>\n";         
+                    
+    } 
+    
+    public function endHTML() {
+        echo "\n</body>\n"
+        . "</html>"; 
+    }
+    
+    
+    
 } // end of class 
