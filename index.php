@@ -75,7 +75,7 @@ function mod_form($array){
 function add_form($array) {
    $ht = new htmlhelper();  
    $f = 'add'; 
-    echo $ht->startHTML();    
+   echo $ht->startHTML();    
    echo $ht->BuildStartForm(); 
     foreach($array as $k => $v_array) { // use values of array? 
         echo($ht->BuildFormInsert($v_array));          

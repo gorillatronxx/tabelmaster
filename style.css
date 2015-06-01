@@ -16,6 +16,8 @@ body {
 }
 
 table {
+    margin-left: .5em;
+    
     background-color: darkkhaki;
     border-collapse: collapse; 
     border: 1px solid red;  
@@ -39,48 +41,48 @@ th {
 
 label
 {
-width: 8em;
-float: left;
-text-align: right;
-margin-right: 0.5em;
-display: block
+// width: ;
+    float: left;
+    text-align: right;
+    margin-right: 0.5em;
+    display: block
 }
 
 input
 {
-color: #781351;
-background: #fee3ad;
-border: 1px solid #781351
+    color: #781351;
+    background: #fee3ad;
+    border: 1px solid #781351
 }
 
 button
 {
-margin-left: 1em;
-margin-right: 1em; 
-color: #000;
-background: khaki;
-border: 2px outset #d7b9c9    
+    margin-left: 1em;
+    margin-right: 1em; 
+    color: #000;
+    background: khaki;
+    border: 2px outset #d7b9c9    
 }
 
 .submit input
 {
-margin-left: 4.5em;    
-color: #000;
-background: khaki;
-border: 2px outset #d7b9c9
+    margin-left: 4.5em;    
+    color: #000;
+    background: khaki;
+    border: 2px outset #d7b9c9
 }
 
 fieldset
 {
-border: 1px solid #781351;
-width: 20em
+    border: 1px solid #781351;
+    //width: 10em
 }
 
 legend
 {
-color: #fff;
-background: darkkhaki;
-border: 1px solid #781351;
-padding: 2px 6px
+    color: #fff;
+    background: darkkhaki;
+    border: 1px solid #781351;
+    padding: 2px 6px
 }
 

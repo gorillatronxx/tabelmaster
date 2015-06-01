@@ -33,18 +33,17 @@ class htmlhelper {
 
   // builds (mod & del) links to the table 
   public function linker($rows, $id_field) {
+    $fv = new filterVars;
+    $phpSelf = $fv->phpSelf();    
     $row = '';  
     $c = count($rows); // get # of rows
-    $c--; // minus one to fix offset 
+    $c--;   // minus one to fix offset 
       foreach($rows as $row) {          
-          
         // iterate throug and add a modify button 
 	    for($x = 0; $x <= $c; $x++) {	    
 	  	  $column_u_id = $rows[$x][$id_field]; // use get u_id out of array   
-
-                  $rows[$x]['mod'] = "<A HREF='$_SERVER[PHP_SELF]?f=mod&" . $id_field . "=$column_u_id'><button>Mod</button></A>"; // build mod link 
-
-		  $rows[$x]['del'] = "<A HREF='$_SERVER[PHP_SELF]?f=del&" . $id_field . "=$column_u_id'><button>Del</button></A>"; // build del link	
+                  $rows[$x]['mod'] = "<A HREF='$phpSelf?f=mod&" . $id_field . "=$column_u_id'><button>Mod</button></A>"; // build mod link 
+		  $rows[$x]['del'] = "<A HREF='$phpSelf?f=del&" . $id_field . "=$column_u_id'><button>Del</button></A>"; // build del link	
 	    }	
     }
     return $rows; 
@@ -52,7 +51,8 @@ class htmlhelper {
   
   // Put more html classes here
      function BuildStartForm() {
-       $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+       $fv = new filterVars;
+       $phpSelf = $fv->phpSelf();  
        echo "<fieldset>";
        echo "<legend>tablemaster</legend>";
        echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>\n";     
@@ -67,20 +67,20 @@ class htmlhelper {
         
         // make hidden or text type 
         if ($type === 'hidden') {
-           $i = "<INPUT TYPE='$type' NAME='$v[NAME]' VALUE='$value'>";            
+           $i = "<INPUT TYPE='$type' NAME='$v[NAME]' VALUE='$value'>\n";            
             
         } else {
             $i = "<P>\n";
-            $i .= "<label for='$v[NAME]'>" . $v['LABEL'] ."</label>\n";
-            $i .= "<INPUT TYPE='$v[TYPE]'NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]' required>";
-            $i .= "</P>"; 
+            $i .= "<label for='$v[NAME]'>" . $v['LABEL'] ."</label><BR>\n";
+            $i .= "<INPUT TYPE='$v[TYPE]'NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]' required>\n";
+            $i .= "</P>\n"; 
         }
         // Need to add textarea type
         return $i;  
     }
     
     // end of the form 
-    function BuildEndForm($f) {
+    public function BuildEndForm($f) {
         echo "<INPUT TYPE='hidden' NAME='f' VALUE='$f'>"; // this is coded in 
         echo "<p class='submit'> <input type='submit' value='Submit' /></p>"; 
         echo "</fieldset>"; 
