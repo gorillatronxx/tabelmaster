@@ -11,4 +11,8 @@ define("SORT_FIELD","animal_id");
 
 define("CSS","style.css"); 
 
+define("LEGEND_ADD","Add");
+define("LEGEND_MODIFY","Modify");
+define("LEGEND_SHOWING","Showing"); 
+
 //define("ID_FIELD","animal_id");

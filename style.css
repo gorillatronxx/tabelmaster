@@ -11,16 +11,14 @@ http://www.webcredible.com/blog-reports/css/css-forms.shtml?
 */
 
 body {
-    background-color: azure;
+    background-color: whitesmoke;
     font-family:arial;
 }
 
-table {
-    margin-left: .5em;
-    
+table { 
     background-color: darkkhaki;
     border-collapse: collapse; 
-    border: 1px solid red;  
+    border: 2px solid darkkhaki;  
 }
 
 tr:nth-child(even) {
@@ -28,20 +26,18 @@ tr:nth-child(even) {
 }
 
 td, th {
-    color: grey;
-    padding: .25em;
+    color: black;
+    padding-left: 1em;
 }
 
 th { 
-    color: black; 
-    //background-color: brown;
-    padding-bottom: .5em;
-    border-bottom: 1px solid red; 
+    color: gray;
+    padding-bottom: .25em;
+    text-align: left;
 }
 
 label
 {
-// width: ;
     float: left;
     text-align: right;
     margin-right: 0.5em;
@@ -57,9 +53,9 @@ input
 
 button
 {
-    margin-left: 1em;
-    margin-right: 1em; 
-    color: #000;
+    margin-left: .25em;
+    margin-right: .25em; 
+    color: black;
     background: khaki;
     border: 2px outset #d7b9c9    
 }
@@ -74,8 +70,8 @@ button
 
 fieldset
 {
+    display: inline; // makes it expand with content
     border: 1px solid #781351;
-    //width: 10em
 }
 
 legend
@@ -83,6 +79,6 @@ legend
     color: #fff;
     background: darkkhaki;
     border: 1px solid #781351;
-    padding: 2px 6px
+    padding: 2px 6px;
 }
 

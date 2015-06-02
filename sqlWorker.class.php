@@ -14,20 +14,19 @@
 class sqlWorker {
 
     // Just show the data in a table sorted
-    public function show() {
+    public function show($s) {
         $database = new Database(); 
         $ht       = new HtmlHelper();
+      
+        $sort_field = $s; 
+        
         // Build the sql piece by piece to put in $vars     
-        $sql = "SELECT * FROM " . TABLE_NAME . " ORDER BY " . SORT_FIELD; 
+        $sql = "SELECT * FROM " . TABLE_NAME . " ORDER BY " . $sort_field; 
         $database->query($sql);  
         $result = $database->resultset(); 
         /*** send to the linker  param 1 - data  --- param 2 - unique db row  ***/
-        $rows = $ht->linker($result, PRIMARY_KEY); // Builds link on id field
-        
+        $rows = $ht->linker($result, PRIMARY_KEY); // Builds link on id field  
         $table = $ht->array2table($rows); 
-        //echo  $ht->array2table($rows); // Prints out a table         
-        ////$ht->add_button(); // adds a stupid button
-        //exit; 
         return $table; 
     } // end function 
     
