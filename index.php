@@ -2,6 +2,7 @@
 ob_start();
 
 // make include once / or auto / or put them into lib
+
 // Make good docs of all methods 
 
 include 'config.class.php';     // db config stuff

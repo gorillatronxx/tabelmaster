@@ -13,6 +13,8 @@
 
 class sqlWorker {
 
+  
+    
     // Just show the data in a table sorted
     public function show($s) {
         $database = new Database(); 
@@ -141,11 +143,6 @@ class sqlWorker {
         $fv = new filterVars;
         $phpSelf = $fv->phpSelf();
         header("location:$phpSelf") ;		
-    }
-
-
-    
-
-    
+    }    
    
 } // End class

@@ -1,7 +1,7 @@
 <?php
 
 class htmlhelper {
-
+    
   // Builds a table from rows of data    
   public function array2table($array, $table = true) {
     $out = '';
