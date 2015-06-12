@@ -61,6 +61,9 @@ class htmlhelper {
 
     // builds the form insert things 
     function BuildFormInsert($v) {
+    
+        var_dump($v); 
+        
         $value = isset($v['VALUE']) ? $v['VALUE'] : '';        // value set or not
 
         // figure out type for form 

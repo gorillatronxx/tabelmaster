@@ -23,9 +23,16 @@ class dbMeta {
     ***/ 
       public function buildFormArray($array) {
         $v = NULL; 
-        foreach($array as $k => $v) {         
-            $size = \substr($array[$k]['Type'], -3, 2); // pull numbers size
+    
+        //var_dump($array); 
+        
+        foreach($array as $k => $v) { 
+            
+            // takes char(255) and makes 255
+            $str = $array[$k]['Type'];   
+            $size = filter_var($str, FILTER_SANITIZE_NUMBER_INT); // only ints left
             $array[$k]['SIZE'] = $size; // push SIZE
+            
             $array[$k]['NAME'] = $array[$k]['Field']; // push NAME
             $array[$k]['MAXLENGTH'] = $size;  // push MAXLENGTH
             $label = strtr($array[$k]['Field'], '_',' '); // translate _ to ' ' 
@@ -35,18 +42,40 @@ class dbMeta {
             // also make id for css (later) 
             
             // Work on this later for various data types
+            // Need to make some big mapping thing for each type 
+            
             if($array[$k]['Key'] === 'PRI') { 
                 $array[$k]['TYPE'] = 'HIDDEN';
             } else {
                 $array[$k]['TYPE'] = 'TEXT'; 
             } // and add CHAR, TEXT, TINYTEXT, MEDIUMTEXT, LONGTEXT (searhc TEXT)  
 
+            if($array[$k]['Type'] === 'datetime') {
+                $array[$k]['TYPE'] = 'HIDDEN';
+            }
+            if($array[$k]['Type'] === 'timestamp') {
+                $array[$k]['TYPE'] = 'HIDDEN';  
+            }
+          
+            if($array[$k]['Type'] === 'datetime' or 'timestamp') {
+                
+                // make time & time now
+                $timestamp = time(); 
+                $t = date('Y-m-d h:i:s',$timestamp);
+                $array[$k]['TIME'] = $t; 
+            }
+            
+            
+           // remove junk 
            $unset_array = ['Key','Default','Null','Field','Extra','Type']; 
            foreach ($unset_array as $x) {
                unset($array[$k][$x]); // unset, junk clean up    
            }
            ksort($array[$k]); // sort for fun 
         }
+        
+        // var_dump($array); 
+        
     return $array;     
     }
       
