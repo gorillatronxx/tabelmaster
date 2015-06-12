@@ -43,8 +43,8 @@ class htmlhelper {
             // iterate throug and add a modify button 
 	    for($x = 0; $x <= $c; $x++) {	    
 	  	$column_u_id = $rows[$x][$id_field]; // use get u_id out of array   
-                $rows[$x]['mod'] = "<A HREF='$phpSelf?f=mod&" . $id_field . "=$column_u_id'><button title='Update'> U </button></A>"; // build mod link 
-		$rows[$x]['del'] = "<A HREF='$phpSelf?f=del&" . $id_field . "=$column_u_id'><button title='Delete'> D </button></A>"; // build del link	
+                $rows[$x]['mod'] = "<A HREF='$phpSelf?action=uf&" . $id_field . "=$column_u_id'><button title='Update'> U </button></A>"; // build mod link 
+		$rows[$x]['del'] = "<A HREF='$phpSelf?action=d&" . $id_field . "=$column_u_id'><button title='Delete'> D </button></A>"; // build del link	
 	    }	
         }
     return $rows;    
@@ -86,8 +86,8 @@ class htmlhelper {
     }
     
     // Builds the end of a form 
-    public function BuildEndForm($f) {
-        echo "<INPUT TYPE='hidden' NAME='f' VALUE='$f'>"; // this is coded in 
+    public function BuildEndForm($action) {
+        echo "<INPUT TYPE='hidden' NAME='action' VALUE='$action'>"; // this is coded in 
         echo "<p class='submit'> <input type='submit' value='Submit' /></p>"; 
         echo "</fieldset>"; 
         echo "</FORM>";  
@@ -97,7 +97,7 @@ class htmlhelper {
     private function createButton() {
         $fv = new filterVars;
         $phpSelf = $fv->phpSelf();
-	$addButton = "<A HREF='$phpSelf?f=af'><button title='Create Row'>Create Row</button></A>"; 
+	$addButton = "<A HREF='$phpSelf?action=crf'><button title='Create Row'>Create Row</button></A>"; 
         return $addButton; 
     }
    

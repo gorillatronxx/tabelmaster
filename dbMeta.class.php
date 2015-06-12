@@ -13,63 +13,39 @@
  */
 class dbMeta {
     
-    /*** This takes in some data and formats it all nice to build forms.
-      Makes array like this keyed with NAME
-      'SIZE' => string '25' (length=2)
-      'NAME' => string 'animal_type' (length=11)
-      'VLAUE' => string '' (length=0)
-      'MAXLENGTH' => string '25' (length=2)
-      'TYPE' => string 'TEXT' (length=4)
-    ***/ 
-    
-    
-    
       public function buildFormArray($array) {
         $v = NULL; 
     
-        //var_dump($array); 
+        var_dump($array);
         
+/*  array comes in keyed by col name has: 
+ * 
+ * Field  - this is the name of the form field
+ * Type  - this is the DB data type  
+ * Null  - NULL or not YES / NO
+ * Key   - PRI (look for the primary here)  
+ * Default - null / current time stamp
+ * Extra   - auto_increment    
+ *  
+ * 
+ * Need to produce an array like this : key is the col name as above 
+ * 
+ * FORM_LABEL - so user can see 
+ * FORM_SIZE - se
+ * FORM_MAXLENGTH - se
+ * FORM_TYPE - hidden, text, time, text_area, bool
+ * FORM_VALUE - to be filled in later? 
+ * 
+ */    
         foreach($array as $k => $v) { 
             
-            // takes char(255) and makes 255
-            $str = $array[$k]['Type'];   
-            $size = filter_var($str, FILTER_SANITIZE_NUMBER_INT); // only ints left
-            $array[$k]['SIZE'] = $size; // push SIZE
+            // Run each  through some private functions 
+            $array[$k]['FORM_LABEL']     = $this->make_form_label($array[$k]['Field']);            
+            $array[$k]['FORM_SIZE']      = $this->make_form_size($array[$k]['Type']); 
+            $array[$k]['FORM_MAXLENGTH'] = $this->make_form_size($array[$k]['Type']); 
+            $array[$k]['FORM_TYPE']      = $this->make_form_type($array[$k]['Type']);
             
-            $array[$k]['NAME'] = $array[$k]['Field']; // push NAME
-            $array[$k]['MAXLENGTH'] = $size;  // push MAXLENGTH
-            $label = strtr($array[$k]['Field'], '_',' '); // translate _ to ' ' 
-            $array[$k]['LABEL'] = ucwords($label); // capitalize words, push LABLE
-            
-            // placeholder & autofocus attributes
-            // also make id for css (later) 
-            
-            // Work on this later for various data types
-            // Need to make some big mapping thing for each type 
-            
-            if($array[$k]['Key'] === 'PRI') { 
-                $array[$k]['TYPE'] = 'HIDDEN';
-            } else {
-                $array[$k]['TYPE'] = 'TEXT'; 
-            } // and add CHAR, TEXT, TINYTEXT, MEDIUMTEXT, LONGTEXT (searhc TEXT)  
-
-            if($array[$k]['Type'] === 'datetime') {
-                $array[$k]['TYPE'] = 'HIDDEN';
-            }
-            if($array[$k]['Type'] === 'timestamp') {
-                $array[$k]['TYPE'] = 'HIDDEN';  
-            }
-          
-            if($array[$k]['Type'] === 'datetime' or 'timestamp') {
-                
-                // make time & time now
-                $timestamp = time(); 
-                $t = date('Y-m-d h:i:s',$timestamp);
-                $array[$k]['TIME'] = $t; 
-            }
-            
-            
-           // remove junk 
+            // remove junk 
            $unset_array = ['Key','Default','Null','Field','Extra','Type']; 
            foreach ($unset_array as $x) {
                unset($array[$k][$x]); // unset, junk clean up    
@@ -77,13 +53,34 @@ class dbMeta {
            ksort($array[$k]); // sort for fun 
         }
         
-        // var_dump($array); 
+         var_dump($array); 
         
     return $array;     
     }
-      
+
+    private function make_form_type($str){
+        if($str === 'PRI') {            
+            return 'hidden';
+        } else {
+            return 'text'; 
+        }
+        
+    }
+    
+    private function make_form_label($str) {
+        $var = strtr($str,'_',' '); 
+        $label = ucwords($var);         
+    return $label;    
+    }
+    
+    private function make_form_size($str) {
+        $size = filter_var($str, FILTER_SANITIZE_NUMBER_INT); // only ints left
+    return $size;
+    }
+    
+    
     // Get all the columns in an array with info from DB SHOW 
-    public function get_db_columns() {  
+    public function get_tabel_columns() {  
         $database = new Database();
         //$sql = NULL; 
         $sql = 'SHOW COLUMNS FROM ' . TABLE_NAME;
@@ -96,7 +93,7 @@ class dbMeta {
     
     // Get the primary key for table         
     public function get_pk() {
-        $array = $this->get_db_columns();
+        $array = $this->get_tabel_columns();
         foreach($array as $x) {
             if($x['Key'] === 'PRI'){
                 $str = $x['Field']; // from db output 
@@ -107,7 +104,7 @@ class dbMeta {
 
     // Removes the pk (takes data array and pk string
     public function zap_pk_id() {
-        $array = $this->get_db_columns();
+        $array = $this->get_tabel_columns();
         $pk = $this->get_pk(); 
         unset($array[$pk]);
     return $array;     
@@ -125,7 +122,7 @@ class dbMeta {
     
     // Get the names only in array
     public function get_col_names() {
-        $array = $this->get_db_columns(); 
+        $array = $this->get_tabel_columns(); 
         foreach($array as $k => $array) {
             $names[] = $k;
         }
@@ -134,7 +131,7 @@ class dbMeta {
     
     // Get the names only in array w/o pk
     public function get_col_names_no_pk() {
-        $array = $this->get_db_columns();
+        $array = $this->get_tabel_columns();
         $pk = $this->get_pk(); 
         foreach($array as $v => $array) {
             if($v === $pk) {              // remove value = pk

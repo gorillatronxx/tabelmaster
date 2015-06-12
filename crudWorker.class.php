@@ -92,13 +92,13 @@ class crudWorker {
         $database = new Database();
         $del_id = $vars_get[PRIMARY_KEY];
 
-        // Need to automate this like (add row)
-        unset($vars_get['f']); 
-        unset($vars_get[PRIMARY_KEY]); 
+        // Need to automate this like (create row)
+        unset($vars_get['action']);     // removes the action code 
+        unset($vars_get[PRIMARY_KEY]);  // removes the pk 
 
-        $list_of_keys = array_keys($vars_get);
+        $array_keys = array_keys($vars_get);
         $x = NULL;  		
-        foreach($list_of_keys as $f) {
+        foreach($array_keys as $f) {
             $x .= $f . " =:" . $f . ", "; 	
         }
         $update_fields = rtrim($x, $charlist = ', ');
@@ -132,15 +132,16 @@ class crudWorker {
 // Preps the mod row data, puts it into form array for auto gen update form 
 
     private function mod_prep($row){
-        $tm   = new dbMeta(); 
-        $cols = $tm->get_db_columns(); // array w/ all metadata 
-        $form_array_mod =  $tm->buildFormArray($cols); // make to nice form ready
+        $meta   = new dbMeta(); 
+        $cols = $meta->get_tabel_columns(); // array w/ all metadata 
+        $form_array_mod =  $meta->buildFormArray($cols); // make to nice form ready
         // insert the values to the form array for mod form
         foreach($row as $k => $v) {
             $form_array_mod[$k]['VALUE'] = $v;
            }
         mod_form($form_array_mod);  // returns array ready to be processed 
     }
+    
     
     // put in the helper 
     public function move_along() {
