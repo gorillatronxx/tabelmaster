@@ -32,7 +32,7 @@ class htmlhelper {
         }       
     } // end function 
   
-  // builds (mod & del) links to the table 
+  // builds (update & delte) links to the table 
     public function linker($rows, $id_field) {
         $fv = new filterVars;
         $phpSelf = $fv->phpSelf();    
@@ -43,14 +43,16 @@ class htmlhelper {
             // iterate throug and add a modify button 
 	    for($x = 0; $x <= $c; $x++) {	    
 	  	$column_u_id = $rows[$x][$id_field]; // use get u_id out of array   
-                $rows[$x]['mod'] = "<A HREF='$phpSelf?f=mod&" . $id_field . "=$column_u_id'><button title='Modify'> M </button></A>"; // build mod link 
+                $rows[$x]['mod'] = "<A HREF='$phpSelf?f=mod&" . $id_field . "=$column_u_id'><button title='Update'> U </button></A>"; // build mod link 
 		$rows[$x]['del'] = "<A HREF='$phpSelf?f=del&" . $id_field . "=$column_u_id'><button title='Delete'> D </button></A>"; // build del link	
 	    }	
         }
     return $rows;    
     } // end of function 
   
-  // Put more html classes here
+  // HTML Stuff 
+    
+    // Builds the start of a form 
      function BuildStartForm($legend) {
        $fv = new filterVars;
        $phpSelf = $fv->phpSelf();  
@@ -59,10 +61,10 @@ class htmlhelper {
        echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>\n";     
     }
 
-    // builds the form insert things 
+    // builds the form insert items in the form 
     function BuildFormInsert($v) {
     
-        var_dump($v); 
+        //var_dump($v); 
         
         $value = isset($v['VALUE']) ? $v['VALUE'] : '';        // value set or not
 
@@ -83,7 +85,7 @@ class htmlhelper {
         return $i;  
     }
     
-    // end of the form 
+    // Builds the end of a form 
     public function BuildEndForm($f) {
         echo "<INPUT TYPE='hidden' NAME='f' VALUE='$f'>"; // this is coded in 
         echo "<p class='submit'> <input type='submit' value='Submit' /></p>"; 
@@ -91,11 +93,11 @@ class htmlhelper {
         echo "</FORM>";  
     } 
 
-    // Make add button used on the show page 
-    private function addButton() {
+    // Make Create Row button used on the read tabel page 
+    private function createButton() {
         $fv = new filterVars;
         $phpSelf = $fv->phpSelf();
-	$addButton = "<A HREF='$phpSelf?f=af'><button title='Add Row'>Add Row</button></A>"; 
+	$addButton = "<A HREF='$phpSelf?f=af'><button title='Create Row'>Create Row</button></A>"; 
         return $addButton; 
     }
    
@@ -111,7 +113,7 @@ class htmlhelper {
             $l .= "<th><a href='$phpSelf?s=$name'><button title='Sort by $label'>$label</button></A></th>\n  "; 
         }
         $l .= '<th colspan=2>';    
-        $l .= $this->addButton(); 
+        $l .= $this->createButton(); 
         $l .= '</th></tr>'; 
         return $l; 
     }
@@ -121,7 +123,8 @@ class htmlhelper {
         $str_out = ucwords(\strtr($str,'_',' '));        
         return $str_out; 
     }
-       
+    
+    // Builds the start of a HTML page
     public function startHTML() {
         $css = CSS; 
         // if we have a .css in the config.class 
@@ -140,6 +143,7 @@ class htmlhelper {
                     
     } 
     
+    // Builds the end of an HTML page 
     public function endHTML() {
         echo "\n</body>\n"
         . "</html>"; 

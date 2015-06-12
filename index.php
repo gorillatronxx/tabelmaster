@@ -3,18 +3,16 @@ ob_start();
 
 // make include once / or auto / or put them into lib
 
-// Make good docs of all methods 
+require_once 'config.class.php';     // db config stuff
+require_once 'database.class.php';   // database pdo class
+require_once 'dbMeta.class.php';     // database metadata helper
+require_once 'crudWorker.class.php';  // builds sql statments for pdo
+require_once 'htmlhelper.class.php'; // html routines 
+require_once 'filterVars.class.php'; // filter supper globals
 
-include 'config.class.php';     // db config stuff
-include 'database.class.php';   // database pdo class
-include 'dbMeta.class.php';     // database metadata helper
-include 'sqlWorker.class.php';  // builds sql statments for pdo
-include 'htmlhelper.class.php'; // html routines 
-include 'filterVars.class.php'; // filter supper globals
-
-$tm        = new dbMeta();      // create db matadata object
-$sqlWorker = new sqlWorker();   // create sql worker 
-$fv        = new filterVars();  // 
+$tm         = new dbMeta();      // create db matadata object
+$crudWorker = new crudWorker();   // create sql worker 
+$fv         = new filterVars();  // 
 
 $safe_get = $fv->SafeGet();     // get the filtered get 
 $pk = $tm->get_pk();            // str of the pk
@@ -29,30 +27,30 @@ $form_array_add =  $tm->buildFormArray($cols_no_pk); // columns for add form
 
 // Cases 
 switch($f) {
-    case "af"  : add_form($form_array_add); // ? takes no vars
+    case "af"  : create_row_form($form_array_add); // cols for add no pk
         break;
-    case "r"   : show_data($s); // show table DONE
+    case "r"   : read_data($s); // read data table 
 	break;
-    case "del" : $sqlWorker->del_row($safe_get[PRIMARY_KEY]); // del DONE
+    case "del" : $crudWorker->delete_row($safe_get[PRIMARY_KEY]); // del DONE
         break;
-    case "add" : $sqlWorker->add_row($safe_get); // DONE
+    case "add" : $crudWorker->create_row($safe_get); // DONE
         break;  
-    case "ud"  : $sqlWorker->update($safe_get); // DONE
+    case "ud"  : $crudWorker->update_row($safe_get); // DONE
 	break;  
-    case "mod" : $sqlWorker->mod_pull_row($safe_get[PRIMARY_KEY]); // DONE		
+    case "mod" : $crudWorker->get_update_row($safe_get[PRIMARY_KEY]); // DONE		
 	break; 
 }			
 
 // this stuff is all output to screen 
 
-// show the table data
-function show_data($s) {
-    $ht = new htmlhelper(); 
-    $sq = new sqlWorker;
+// read the table data
+function read_data($s) {
+    $ht   = new htmlhelper(); 
+    $crud = new crudWorker();
     echo $ht->startHTML(); 
-    echo '<fieldset><legend> Viewing - ' . ucfirst(TABLE_NAME) 
+    echo '<fieldset><legend>' . LEGEND_READ . ' - ' . ucfirst(TABLE_NAME) 
             . ' sorted by ' . $ht->labelMaker($s) .'</legend>';
-    echo $sq->show($s); 
+    echo $crud->read($s); 
     echo '</fieldset>'; 
     echo $ht->endHTML(); 
 }
@@ -61,7 +59,7 @@ function show_data($s) {
 function mod_form($array){
     $ht = new htmlhelper();
     $f = 'ud';
-    $legend = LEGEND_MODIFY . " - " . ucfirst(TABLE_NAME);
+    $legend = LEGEND_UPDATE . " - " . ucfirst(TABLE_NAME);
     echo $ht->startHTML();     
     echo $ht->BuildStartForm($legend); 
        foreach($array as $k => $v_array) {
@@ -72,10 +70,10 @@ function mod_form($array){
 }
 
 // Make Add form
-function add_form($array) { 
+function create_row_form($array) { 
    $ht = new htmlhelper();  
    $f = 'add'; 
-   $legend = LEGEND_ADD . " - " . ucfirst(TABLE_NAME); 
+   $legend = LEGEND_CREATE . " - " . ucfirst(TABLE_NAME); 
    echo $ht->startHTML();    
    echo $ht->BuildStartForm($legend); 
     foreach($array as $k => $v_array) { // use values of array? 

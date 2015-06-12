@@ -21,6 +21,9 @@ class dbMeta {
       'MAXLENGTH' => string '25' (length=2)
       'TYPE' => string 'TEXT' (length=4)
     ***/ 
+    
+    
+    
       public function buildFormArray($array) {
         $v = NULL; 
     

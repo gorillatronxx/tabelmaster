@@ -7,12 +7,14 @@
  */
 
 /**
- * Description of filterVars
+ * Description of filterVars - this just takes the globals and filters them to 
+ * be safe. 
  *
  * @author jms04747
  */
 class filterVars {
 
+    // Filter the $_GET
     public function SafeGet() {
         $safe_get = '';
         foreach($_GET as $k => $v) {
@@ -22,7 +24,7 @@ class filterVars {
     return $safe_get; 
     }
     
-    
+    // Fileter the PHP_SELF 
     public function phpSelf() {
         $phpSelf = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     return $phpSelf; 
