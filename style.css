@@ -1,0 +1,84 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+http://www.webcredible.com/blog-reports/css/css-forms.shtml?
+
+*/
+/* 
+    Created on : May 29, 2015, 12:04:47 PM
+    Author     : jms04747
+*/
+
+body {
+    background-color: whitesmoke;
+    font-family:arial;
+}
+
+table { 
+    background-color: darkkhaki;
+    border-collapse: collapse; 
+    border: 2px solid darkkhaki;  
+}
+
+tr:nth-child(even) {
+    background-color: white; 
+}
+
+td, th {
+    color: black;
+    padding-left: 1em;
+}
+
+th { 
+    color: gray;
+    padding-bottom: .25em;
+    text-align: left;
+}
+
+label
+{
+    float: left;
+    text-align: right;
+    margin-right: 0.5em;
+    display: block
+}
+
+input
+{
+    color: #781351;
+    background: #fee3ad;
+    border: 1px solid #781351
+}
+
+button
+{
+    margin-left: .25em;
+    margin-right: .25em; 
+    color: black;
+    background: khaki;
+    border: 2px outset #d7b9c9    
+}
+
+.submit input
+{
+    margin-left: 4.5em;    
+    color: #000;
+    background: khaki;
+    border: 2px outset #d7b9c9
+}
+
+fieldset
+{
+    display: inline; // makes it expand with content
+    border: 1px solid #781351;
+}
+
+legend
+{
+    color: #fff;
+    background: darkkhaki;
+    border: 1px solid #781351;
+    padding: 2px 6px;
+}
+
