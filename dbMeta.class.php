@@ -14,68 +14,68 @@
 class dbMeta {
     
       public function buildFormArray($array) {
-        $v = NULL; 
-    
-        var_dump($array);
         
-/*  array comes in keyed by col name has: 
- * 
- * Field  - this is the name of the form field
- * Type  - this is the DB data type  
- * Null  - NULL or not YES / NO
- * Key   - PRI (look for the primary here)  
- * Default - null / current time stamp
- * Extra   - auto_increment    
- *  
- * 
- * Need to produce an array like this : key is the col name as above 
- * 
- * FORM_LABEL - so user can see 
- * FORM_SIZE - se
- * FORM_MAXLENGTH - se
- * FORM_TYPE - hidden, text, time, text_area, bool
- * FORM_VALUE - to be filled in later? 
- * 
- */    
+        /*  array comes in keyed by col name has: 
+         * 
+         * Field  - this is the name of the form field
+         * Type  - this is the DB data type  
+         * Null  - NULL or not YES / NO
+         * Key   - PRI (look for the primary here)  
+         * Default - null / current time stamp
+         * Extra   - auto_increment    
+         *  
+         * Need to produce an array like this : key is the col name as above 
+         * 
+         * FORM_LABEL - so user can see 
+         * FORM_SIZE - se
+         * FORM_MAXLENGTH - se
+         * FORM_TYPE - hidden, text, time, text_area, bool
+         * FORM_VALUE - to be filled in later? 
+         * 
+         */    
+        $v = NULL;
         foreach($array as $k => $v) { 
             
-            // Run each  through some private functions 
+            // Run each  through some private functions to build array
             $array[$k]['FORM_LABEL']     = $this->make_form_label($array[$k]['Field']);            
             $array[$k]['FORM_SIZE']      = $this->make_form_size($array[$k]['Type']); 
             $array[$k]['FORM_MAXLENGTH'] = $this->make_form_size($array[$k]['Type']); 
+            $array[$k]['FORM_TYPE']      = $this->make_form_type($array[$k]['Key']);
             $array[$k]['FORM_TYPE']      = $this->make_form_type($array[$k]['Type']);
+            $array[$k]['FORM_NAME']      = $array[$k]['Field'];
             
-            // remove junk 
+           // remove junk 
            $unset_array = ['Key','Default','Null','Field','Extra','Type']; 
            foreach ($unset_array as $x) {
                unset($array[$k][$x]); // unset, junk clean up    
            }
            ksort($array[$k]); // sort for fun 
-        }
-        
-         var_dump($array); 
-        
+        }        
+    //var_dump($array); 
     return $array;     
     }
 
     private function make_form_type($str){
         if($str === 'PRI') {            
             return 'hidden';
+        } elseif($str ==='datetime'){
+            return 'datetime';
+        } elseif($str === 'timestamp') {
+            return 'timestamp';
         } else {
             return 'text'; 
         }
-        
     }
+    
     
     private function make_form_label($str) {
         $var = strtr($str,'_',' '); 
-        $label = ucwords($var);         
-    return $label;    
+        return $label = ucwords($var);             
     }
     
+    
     private function make_form_size($str) {
-        $size = filter_var($str, FILTER_SANITIZE_NUMBER_INT); // only ints left
-    return $size;
+        return $size = filter_var($str, FILTER_SANITIZE_NUMBER_INT); // only ints left
     }
     
     

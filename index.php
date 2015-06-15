@@ -75,7 +75,6 @@ function create_form() {
             //$cols_no_pk  = $meta->zap_pk_id(); // array w/o pk all meta data
 
    $cols = $meta->get_tabel_columns(); // get the table cols from TABLE SHOW 
-   
    $array = $meta->buildFormArray($cols); // columns for add form
    
    echo $ht->startHTML();    

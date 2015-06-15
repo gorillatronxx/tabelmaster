@@ -61,25 +61,26 @@ class htmlhelper {
        echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>\n";     
     }
 
-    // builds the form insert items in the form 
+    // builds the form insert items in the form @rray
     function BuildFormInsert($v) {
     
-        //var_dump($v); 
+        var_dump($v); 
         
         $value = isset($v['VALUE']) ? $v['VALUE'] : '';        // value set or not
 
         // figure out type for form 
         $type = ($v['TYPE'] === "HIDDEN") ? 'hidden' : 'visable'; 
         
-        // make hidden or text type 
-        if ($type === 'hidden') {
-           $i = "<INPUT TYPE='$type' NAME='$v[NAME]' VALUE='$value'>\n";            
-            
-        } else {
+        if ($v['FORM_TYPE'] === 'hidden'){
+            $i = "<INPUT TYPE='hidden' NAME='$v[FORM_NAME]' VALUE='$v[value]'>"; 
+        } 
+        elseif ($v['FORM_TYPE'] === 'text') {
             $i = "<P>\n";
             $i .= "<label for='$v[NAME]'>" . $v['LABEL'] ."</label><BR>\n";
             $i .= "<INPUT TYPE='$v[TYPE]'NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]' required>\n";
             $i .= "</P>\n"; 
+        } else {
+            $i = "DATE"; 
         }
         // Need to add textarea type
         return $i;  
