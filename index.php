@@ -28,7 +28,7 @@ $s = isset($safe_get['s']) ? $safe_get['s'] : SORT_FIELD; // sort field
 // Cases for the CRUD or forms
 switch($action) {
     // Create row 
-    case "c" : $crudWorker->create_row($safe_get); // param = safe get array  
+    case "c" : $crudWorker->create_row($safe_get); // param = safe get array         
         break;
     // Read database
     case "r"   : read_data($s); // param = sort string
@@ -49,20 +49,28 @@ switch($action) {
 
 // this stuff is all output to screen (page views built) 
    
-// make the Modify form 
-function mod_form($array){
-    $ht = new htmlhelper();
+// make the Update form 
+function update_form($array){
+    
+   
     $action = 'u';
-    $legend = LEGEND_UPDATE . " - " . ucfirst(TABLE_NAME);
+    $legend = LEGEND_UPDATE . " - " . ucfirst(TABLE_NAME);    
+    $ht = new htmlhelper();
+    
+        //$meta   = new dbMeta();    
+        //$cols = $meta->get_tabel_columns(); // get the table cols from TABLE SHOW 
+        //$array = $meta->buildFormArray($cols); // columns for add form
+    
     echo $ht->startHTML();     
     echo $ht->BuildStartForm($legend); 
-       foreach($array as $k => $v_array) {
-           echo($ht->BuildFormInsert($v_array));
-        } 
+    
+    //var_dump($array); 
+    echo $ht->BuildFormInsert($array);
+ 
+    
     echo $ht->BuildEndForm($action); 
     echo $ht->endHTML();     
 }
-
 
 
 // Make Add form
@@ -71,23 +79,17 @@ function create_form() {
    $legend = LEGEND_CREATE . " - " . ucfirst(TABLE_NAME); 
    $ht     = new htmlhelper();
    $meta   = new dbMeta(); 
-   
-            //$cols_no_pk  = $meta->zap_pk_id(); // array w/o pk all meta data
-
    $cols = $meta->get_tabel_columns(); // get the table cols from TABLE SHOW 
    $array = $meta->buildFormArray($cols); // columns for add form
-   
    echo $ht->startHTML();    
    echo $ht->BuildStartForm($legend); 
-    foreach($array as $k => $v_array) { // use values of array? 
-        echo($ht->BuildFormInsert($v_array));          
-    } 
+   
+//   var_dump($array); 
+   
+   echo $ht->BuildFormInsert($array);   
    echo $ht->BuildEndForm($action);
    echo $ht->endHTML(); 
 }
-
-
-
 
 
 // read the table data

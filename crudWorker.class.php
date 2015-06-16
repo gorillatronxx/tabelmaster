@@ -138,8 +138,9 @@ class crudWorker {
         // insert the values to the form array for mod form
         foreach($row as $k => $v) {
             $form_array_mod[$k]['VALUE'] = $v;
-           }
-        mod_form($form_array_mod);  // returns array ready to be processed 
+           }    
+           
+    update_form($form_array_mod);  // returns array ready to be processed 
     }
     
     

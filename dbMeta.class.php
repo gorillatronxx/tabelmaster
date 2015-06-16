@@ -34,13 +34,16 @@ class dbMeta {
          * 
          */    
         $v = NULL;
+        
+        //var_dump($array); 
+        
         foreach($array as $k => $v) { 
             
             // Run each  through some private functions to build array
             $array[$k]['FORM_LABEL']     = $this->make_form_label($array[$k]['Field']);            
             $array[$k]['FORM_SIZE']      = $this->make_form_size($array[$k]['Type']); 
             $array[$k]['FORM_MAXLENGTH'] = $this->make_form_size($array[$k]['Type']); 
-            $array[$k]['FORM_TYPE']      = $this->make_form_type($array[$k]['Key']);
+            $array[$k]['FORM_HIDE']      = $this->make_form_hide($array[$k]['Key']);
             $array[$k]['FORM_TYPE']      = $this->make_form_type($array[$k]['Type']);
             $array[$k]['FORM_NAME']      = $array[$k]['Field'];
             
@@ -55,25 +58,37 @@ class dbMeta {
     return $array;     
     }
 
+    
+    // make form type    
     private function make_form_type($str){
-        if($str === 'PRI') {            
-            return 'hidden';
-        } elseif($str ==='datetime'){
+        if($str ==='datetime'){
             return 'datetime';
         } elseif($str === 'timestamp') {
             return 'timestamp';
+        } elseif($str === 'text') {
+             return 'textarea'; 
         } else {
+            // this is char, varchar, and other stuff 
             return 'text'; 
         }
     }
     
     
+    // make PRI hidden
+    private function make_form_hide($str){
+        if($str === 'PRI') {
+            return 'hidden'; 
+        }
+    }
+    
+    // make label nice
     private function make_form_label($str) {
         $var = strtr($str,'_',' '); 
         return $label = ucwords($var);             
     }
     
     
+    // make size of text 
     private function make_form_size($str) {
         return $size = filter_var($str, FILTER_SANITIZE_NUMBER_INT); // only ints left
     }

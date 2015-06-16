@@ -2,11 +2,13 @@
 
 class htmlhelper {
     
+    
   // Builds a table from rows of data    
   public function array2table($array, $table = true) {
     $out = '';
     foreach ($array as $key => $value) {
         if (is_array($value)) {
+
             /** if (!isset($tableHeader)) {        
                 $tableHeader =
                     '<tr><th>' .
@@ -14,10 +16,16 @@ class htmlhelper {
                     '</th></tr>';
             } **/                  
             array_keys($value);
+
+            
+            
             $out .= "\n<tr>";
             $out .= $this->array2table($value, false);
             $out .= "</tr>\n";
             } else {
+                
+               // $value = $value . "xxx"; // right here
+                
                 $out .= "<td>$value</td>";
             }
         }
@@ -62,29 +70,101 @@ class htmlhelper {
     }
 
     // builds the form insert items in the form @rray
-    function BuildFormInsert($v) {
-    
-        var_dump($v); 
+    // this can come from the create or update form 
+    public function BuildFormInsert($array) {
+        $out = ''; 
+        // make the get safe     
+        $fv = new filterVars(); 
+        $safe_get = $fv->SafeGet(); 
+        $action = $safe_get['action']; // set action 
         
-        $value = isset($v['VALUE']) ? $v['VALUE'] : '';        // value set or not
-
-        // figure out type for form 
-        $type = ($v['TYPE'] === "HIDDEN") ? 'hidden' : 'visable'; 
-        
-        if ($v['FORM_TYPE'] === 'hidden'){
-            $i = "<INPUT TYPE='hidden' NAME='$v[FORM_NAME]' VALUE='$v[value]'>"; 
-        } 
-        elseif ($v['FORM_TYPE'] === 'text') {
-            $i = "<P>\n";
-            $i .= "<label for='$v[NAME]'>" . $v['LABEL'] ."</label><BR>\n";
-            $i .= "<INPUT TYPE='$v[TYPE]'NAME='$v[NAME]' VALUE='$value' SIZE='$v[SIZE]' MAXLENGTH='$v[SIZE]' required>\n";
-            $i .= "</P>\n"; 
-        } else {
-            $i = "DATE"; 
+        // If we have the create form 
+        if ($action === 'crf') {
+            $meta = new dbMeta(); 
+            $pk = $meta->get_pk();
+            unset($array[$pk]);  // remove pk field 
         }
-        // Need to add textarea type
-        return $i;  
-    }
+        
+        // Loop this through a function that build each form type 
+        foreach ($array as $k => $v_array) {        
+            $out .= $this->FormItems($v_array, $action); // send data and action code 
+        }
+        return $out; 
+    } // END FUNCTION
+ 
+    
+    // This makes each form type item based on an array of values
+    private function FormItems($x, $action) {
+        $out = ''; 
+        $type  = $x['FORM_TYPE']; // set all the values to someting sane 
+        $name  = $x['FORM_NAME']; 
+        $hide  = $x['FORM_HIDE'];
+        $label = $x['FORM_LABEL'];
+        $size  = $x['FORM_SIZE']; 
+        $max   = $x['FORM_MAXLENGTH']; 
+        $value = isset($x['VALUE']) ? $x['VALUE'] : ''; 
+        $now = date('Y-m-d H:i:s'); 
+       
+        
+        if ($hide === 'hidden') {
+            $type = 'hidden'; 
+        }
+        
+        if ($type === 'hidden') {
+            $out .= "<input type='$type' name='$name' value='$value'>"; 
+        }
+        
+        if ($type === 'text') {
+            $out .= "<p>\n"; 
+            $out .=  "<label for='$label'> $label </label><br>\n "; 
+            $out .= "<input type='$type' name='$name' value='$value' size='$size' maxlength='$max' required>\n";
+            $out .= "</p>\n"; 
+        }
+        
+        // datetime row created 
+        if ($type === 'datetime') {
+            
+            if($action === 'crf') {
+                $value = $now; 
+            }    
+            if($action === 'uf') {
+                $value = $value; 
+            }
+            $out .= "<input type='hidden' name='$name' value='$value'>\n";
+        }
+        
+        // datetime row updated 
+        if ($type === 'timestamp') {
+            
+            if($action === 'crf') {
+                $value = '';
+            }
+            if($action === 'uf'){
+                $value = $now; 
+            }
+            $out .= "<input type='hidden' name='$name' value='$value'>\n";
+        }
+        
+        if ($type === 'textarea') {
+            $out .= "<p>\n";
+            $out .= "<label for='$label'> $label </label><br>\n"; 
+            $out .= "<textarea rows='4' cols='50' name='$name'>$value</textarea>"; // set the rows and col in a global config (work on wrap) 
+            $out .= "</p>\n"; 
+        }
+        
+        
+        // ADD SUPPORT FOR DATE (expires)
+        //
+        // ACTIVE / INACTIVE BOOL? 
+        //
+        // ADD SUPPORT FOR TEXT  / TEXTAREA   
+        
+        
+        //var_dump($x); 
+    return $out;     
+    } // END FUNCTION 
+    
+    
     
     // Builds the end of a form 
     public function BuildEndForm($action) {
