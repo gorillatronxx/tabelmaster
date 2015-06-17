@@ -1,14 +1,12 @@
 <?php
 ob_start();
 
-// make include once / or auto / or put them into lib
-
-require_once 'config.class.php';      // db config stuff
-require_once 'database.class.php';    // database pdo class
-require_once 'dbMeta.class.php';      // database metadata helper
-require_once 'crudWorker.class.php';  // builds sql statments for pdo
-require_once 'htmlhelper.class.php';  // html routines 
-require_once 'filterVars.class.php';  // filter supper globals
+require_once 'lib/config.class.php';      // db config stuff
+require_once 'lib/database.class.php';    // database pdo class
+require_once 'lib/dbMeta.class.php';      // database metadata helper
+require_once 'lib/crudWorker.class.php';  // builds sql statments for pdo
+require_once 'lib/htmlhelper.class.php';  // html routines 
+require_once 'lib/filterVars.class.php';  // filter supper globals
 
 $meta   = new dbMeta();       // create matadata object of table 
 $pk     = $meta->get_pk();            // str of the pk
@@ -51,23 +49,13 @@ switch($action) {
    
 // make the Update form 
 function update_form($array){
-    
-   
     $action = 'u';
     $legend = LEGEND_UPDATE . " - " . ucfirst(TABLE_NAME);    
     $ht = new htmlhelper();
-    
-        //$meta   = new dbMeta();    
-        //$cols = $meta->get_tabel_columns(); // get the table cols from TABLE SHOW 
-        //$array = $meta->buildFormArray($cols); // columns for add form
-    
     echo $ht->startHTML();     
-    echo $ht->BuildStartForm($legend); 
-    
-    //var_dump($array); 
+    echo $ht->BuildStartForm($legend);
+        //var_dump($array); 
     echo $ht->BuildFormInsert($array);
- 
-    
     echo $ht->BuildEndForm($action); 
     echo $ht->endHTML();     
 }
@@ -83,9 +71,7 @@ function create_form() {
    $array = $meta->buildFormArray($cols); // columns for add form
    echo $ht->startHTML();    
    echo $ht->BuildStartForm($legend); 
-   
-//   var_dump($array); 
-   
+        //   var_dump($array); 
    echo $ht->BuildFormInsert($array);   
    echo $ht->BuildEndForm($action);
    echo $ht->endHTML(); 
@@ -98,12 +84,12 @@ function read_data($s) {
     $crud = new crudWorker();
     echo $ht->startHTML(); 
     echo '<fieldset><legend>' . LEGEND_READ . ' - ' . ucfirst(TABLE_NAME) 
-            . ' sorted by ' . $ht->labelMaker($s) .'</legend>';
+            . ' sorted by ' . $ht->labelMaker($s) . ' (column length:'. LENGTH_TABEL_COL  
+            .')</legend>';
     echo $crud->read($s); 
     echo '</fieldset>'; 
     echo $ht->endHTML(); 
 }
-
 
 
 ob_end_flush();

@@ -21,12 +21,23 @@ class crudWorker {
     public function read($s) {
         $database = new Database(); 
         $ht       = new HtmlHelper();
-        $sort_field = $s; 
+        $meta     = new dbMeta();
+        $sort_field = $s;    
+        $cols = $meta->get_col_names(); //array of col names 
+        
+        // build a string that is used to pull a limited # of chars off each col
+        foreach ($cols as $col) {
+            $array[] = "SUBSTRING($col, 1," . LENGTH_TABEL_COL . ") AS $col"; // AS $col makes the return clean 
+        }
+        $cols_limited = implode(", ",$array); // smash it all together    
+        
+            // var_dump($cols_limited); 
         
         // Build the sql piece by piece to put in $vars     
-        $sql = "SELECT * FROM " . TABLE_NAME . " ORDER BY " . $sort_field; 
+        $sql = "SELECT $cols_limited FROM " . TABLE_NAME . " ORDER BY " . $sort_field; 
         $database->query($sql);  
         $result = $database->resultset(); 
+        
         /*** send to the linker  param 1 - data  --- param 2 - unique db row  ***/
         $rows = $ht->linker($result, PRIMARY_KEY); // Builds link on id field  
         $table = $ht->array2table($rows); 

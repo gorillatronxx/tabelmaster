@@ -13,11 +13,16 @@ define("DB_NAME","trash_talk");
 define("TABLE_NAME","lti_keys");
 define("SORT_FIELD","id");
 
-define("CSS",""); 
-//define("CSS","style.css"); 
+
+define("LENGTH_TABEL_COL","20"); // length of the columns in the table on read  
+define("TEXTAREA_ROWS_COLS","rows=4 cols=50"); // how big are <textarea>
+
+
+//define("CSS",""); 
+define("CSS","css/style.css"); 
 
 define("LEGEND_CREATE","Create");
 define("LEGEND_UPDATE","Update");
 define("LEGEND_READ","Read"); 
 
-//define("ID_FIELD","animal_id");
+

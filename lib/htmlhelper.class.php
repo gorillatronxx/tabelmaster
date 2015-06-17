@@ -17,58 +17,63 @@ class htmlhelper {
             } **/                  
             array_keys($value);
 
-            
-            
             $out .= "\n<tr>";
             $out .= $this->array2table($value, false);
             $out .= "</tr>\n";
             } else {
-                
-               // $value = $value . "xxx"; // right here
-                
+           
                 $out .= "<td>$value</td>";
+
             }
         }
         // build it up 
         if ($table) {    
-            $sort_buttons = $this->BuildSortButtons(); //         
-            //$tableHeader = strtr($tableHeader,'_',' '); // remove unerscores
-            //$x = strtoupper($tableHeader);              // Make all caps         
+            $sort_buttons = $this->BuildSortButtons();          
+        
         return "\n<table>\n" . $sort_buttons . $out . "\n</table>\n";
+
         } else {
+            
         return $out;
         }       
     } // end function 
   
+    
   // builds (update & delte) links to the table 
-    public function linker($rows, $id_field) {
+    public function linker($rows, $id) {
         $fv = new filterVars;
         $phpSelf = $fv->phpSelf();    
         $row = '';  
         $c = count($rows); // get # of rows
         $c--;   // minus one to fix offset 
-        foreach($rows as $row) {          
-            // iterate throug and add a modify button 
+        foreach($rows as $row) {             
+            // iterate make update and delete buttons 
 	    for($x = 0; $x <= $c; $x++) {	    
-	  	$column_u_id = $rows[$x][$id_field]; // use get u_id out of array   
-                $rows[$x]['mod'] = "<A HREF='$phpSelf?action=uf&" . $id_field . "=$column_u_id'><button title='Update'> U </button></A>"; // build mod link 
-		$rows[$x]['del'] = "<A HREF='$phpSelf?action=d&" . $id_field . "=$column_u_id'><button title='Delete'> D </button></A>"; // build del link	
+	  	$column_id = $rows[$x][$id]; // use get u_id out of array   
+                $rows[$x]['ud']  = "<A HREF='$phpSelf?action=uf&" . $id . "=$column_id'><button title='Update'> U </button></A>"; // build mod link 
+		$rows[$x]['del'] = "<A HREF='$phpSelf?action=d&" . $id . "=$column_id'><button title='Delete'> D </button></A>"; // build del link	
 	    }	
         }
     return $rows;    
     } // end of function 
   
+    
   // HTML Stuff 
+    
     
     // Builds the start of a form 
      function BuildStartForm($legend) {
        $fv = new filterVars;
        $phpSelf = $fv->phpSelf();  
        echo "<fieldset>";
-       echo "<legend>$legend</legend>";
+       echo "<legend>";
+       echo  $this->homeButton();       
+       echo " $legend"; 
+       echo "</legend>";
        echo "<form action='$phpSelf?' method='get' enctype='text/plain' target='_parent'>\n";     
-    }
+    } // END FUNCTION
 
+    
     // builds the form insert items in the form @rray
     // this can come from the create or update form 
     public function BuildFormInsert($array) {
@@ -105,7 +110,6 @@ class htmlhelper {
         $value = isset($x['VALUE']) ? $x['VALUE'] : ''; 
         $now = date('Y-m-d H:i:s'); 
        
-        
         if ($hide === 'hidden') {
             $type = 'hidden'; 
         }
@@ -148,7 +152,7 @@ class htmlhelper {
         if ($type === 'textarea') {
             $out .= "<p>\n";
             $out .= "<label for='$label'> $label </label><br>\n"; 
-            $out .= "<textarea rows='4' cols='50' name='$name'>$value</textarea>"; // set the rows and col in a global config (work on wrap) 
+            $out .= "<textarea " . TEXTAREA_ROWS_COLS . " name='$name'>$value</textarea>"; // set the rows and col in a global config (work on wrap) 
             $out .= "</p>\n"; 
         }
         
@@ -161,6 +165,7 @@ class htmlhelper {
         
         
         //var_dump($x); 
+        
     return $out;     
     } // END FUNCTION 
     
@@ -174,6 +179,7 @@ class htmlhelper {
         echo "</FORM>";  
     } 
 
+    
     // Make Create Row button used on the read tabel page 
     private function createButton() {
         $fv = new filterVars;
@@ -181,7 +187,16 @@ class htmlhelper {
 	$addButton = "<A HREF='$phpSelf?action=crf'><button title='Create Row'>Create Row</button></A>"; 
         return $addButton; 
     }
-   
+
+    public function homeButton() {
+        $fv = new filterVars;
+        $phpSelf = $fv->phpSelf();
+	$homeButton = "<A HREF='$phpSelf'><button title='Home'>Home</button></A>"; 
+        return $homeButton; 
+    }
+    
+    
+    
     public function BuildSortButtons() {
         $md = new dbMeta();
         $fv = new filterVars(); 
@@ -199,11 +214,13 @@ class htmlhelper {
         return $l; 
     }
 
+    
     // makes table col name into lable text
     public function labelMaker($str) {
         $str_out = ucwords(\strtr($str,'_',' '));        
         return $str_out; 
     }
+   
     
     // Builds the start of a HTML page
     public function startHTML() {
@@ -223,6 +240,7 @@ class htmlhelper {
         . "<body>\n";         
                     
     } 
+    
     
     // Builds the end of an HTML page 
     public function endHTML() {

@@ -102,7 +102,7 @@ class dbMeta {
         $database->query($sql);
         $database->execute();
         $data = $database->resultset();
-        $array = $this->nice_array($data); // Kets the array with Field name
+        $array = $this->nice_array($data); // Gets the array with Field name
     return $array;
     }
     
